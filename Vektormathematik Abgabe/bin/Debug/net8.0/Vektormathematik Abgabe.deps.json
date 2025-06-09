@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Vektormathematik Abgabe/1.0.0": {
+        "runtime": {
+          "Vektormathematik Abgabe.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Vektormathematik Abgabe/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
