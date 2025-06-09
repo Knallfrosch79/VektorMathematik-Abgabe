@@ -9,66 +9,122 @@ namespace Vektormathematik_Abgabe
 {
     internal class OperatorChoosing
     {
-        //ToDo:     Datentypfehlerlösung finden
-        //          Berechnungen
-        //          Anforderungen analysieren
-
         public static void ChoosingOperation()
         {
+            // Deklaration der Variablen
             Vector3 v3;
+            Vector3 v1 = new Vector3();
+            Vector3 v2 = new Vector3();
+            float num01 = 0f; // Initialisierung für den Fall, dass Multiplikation gewählt wird
             float product;
             
-            char operation = OperationsPick();
+            char operation = TextGoodies.OperationsPick();
                 //Console.WriteLine($"[DEBUG] ausgewähltes Zeichen: '{operation}'\n");
                 //Console.WriteLine("[DEBUG] Jetzt rufe ich VektorInput() auf …");
-            Console.WriteLine("Du hast die Operation " + operation + " gewählt.\n");
-
-            var (v1 , v2) = VektorInput();
-            //Console.WriteLine("[DEBUG] VektorInput() wurde zurückgegeben.\n");
+            if (operation == 'M')
+            {
+                (v1, num01) = VectorNumInput();
+            }
+            else if (operation == 'Q')
+            {
+                (v1) = VectorInput();
+            }
+            else
+            {
+                (v1, v2) = TwoVectorInput();
+                //Console.WriteLine("[DEBUG] VektorInput() wurde zurückgegeben.\n");
+            }
 
             if (operation == 'A')
             {
                 v3 = V_Calculation.Addition(v1, v2);
+                TextGoodies.TextWait();
+                Console.WriteLine($"Das Ergebnis der Addition ist: Vektor3 {v3}");
+                TextGoodies.WaitForEnter();
+                return;
             }
             else if (operation == 'S')
             {
                 v3 = V_Calculation.Subtraktion(v1, v2);
+                TextGoodies.TextWait();
+                Console.WriteLine($"Das Ergebnis der Subtraktion ist: Vektor3 {v3}");
+                TextGoodies.WaitForEnter();
+                return;
             }
             else if (operation == 'M')
             {
-                v3 = V_Calculation.Multiplikation(v1, v2);
+                v3 = V_Calculation.Multiplikation(v1, num01);
+                TextGoodies.TextWait();
+                Console.WriteLine($"Das Ergebnis der Multiplikation ist: Vektor3 {v3} - (Vektor1 * {num01})");
+                TextGoodies.WaitForEnter();
+                return;
             }
             else if (operation == 'D')
             {
-                v3 = V_Calculation.Division(v1, v2);
+                v3 = V_Calculation.Division(v1, num01);
+                TextGoodies.TextWait();
+                Console.WriteLine($"Das Ergebnis der Division ist: Vektor3 {v3} - (Vektor3 : {num01})");
+                TextGoodies.WaitForEnter();
+                return;
             }
             else if (operation == 'L')
             {
                 float length1 = V_Calculation.Vektorlaenge(v1);
                 float length2 = V_Calculation.Vektorlaenge(v2);
+                TextGoodies.TextWait();
                 Console.WriteLine($"Die Länge des ersten Vektors ist {length1} und die des zweiten {length2}.");
+                TextGoodies.WaitForEnter();
                 return;
             }
             else if (operation == 'Q')
             {
-                product = V_Calculation.Quadratlaenge(v1, v2);
-                Console.WriteLine($"Die Quadratlänge der beiden Vektoren ist {product}.");
+                product = V_Calculation.Quadratlaenge(v1);
+                TextGoodies.TextWait();
+                Console.WriteLine($"Die Quadratlänge des Vektores ist {product}.");
+                TextGoodies.WaitForEnter();
                 return;
             }
             else if (operation == 'P')
             {
                 product = V_Calculation.Punktprodukt(v1, v2);
+                TextGoodies.TextWait();
                 Console.WriteLine($"Das Punktprodukt der beiden Vektoren ist {product}.");
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Ungültige Operation gewählt.");
+                TextGoodies.WaitForEnter();
                 return;
             }
         }
 
-        private static (Vector3 , Vector3) VektorInput()
+        /// <summary>
+        /// Liest einen Vektor vom Nutzer ein und gibt ihn zurück.
+        /// </summary>
+        /// <returns></returns>
+        private static Vector3 VectorInput()
+        {
+            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B.\"1.0 2.5 -3\"):");
+            Vector3 v1 = ReadVectorFromConsole();
+            return v1;
+        }
+
+        /// <summary>
+        /// Liest einen Vektor und eine Zahl vom Nutzer ein und gibt sie als Tupel zurück.
+        /// </summary>
+        /// <returns></returns>
+        private static (Vector3 v1, float num01) VectorNumInput()
+        {
+            Console.WriteLine("Gib jetzt bitte einmal den Vektor ein und danach die Zahl.");
+            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B.\"1.0 2.5 -3\"):");
+            Vector3 v1 = ReadVectorFromConsole();
+            Console.WriteLine("");
+            Console.Write("Bitte gib eine Zahl ein (z.B. \"2.5\"): ");
+            float num01 = TextGoodies.ReadInput(); // Liest eine Zahl vom Nutzer ein
+            return (v1, num01);
+        }
+
+        /// <summary>
+        /// Liest zwei Vektoren vom Nutzer ein und gibt sie als Tupel zurück.
+        /// </summary>
+        /// <returns></returns>
+        private static (Vector3 , Vector3) TwoVectorInput()
         {
             Console.WriteLine("Jetzt brauchen wir noch die beiden Vektoren:");
             Console.Write("Bitte gib 3 Werte für den ersten Vektor ein (z.B.\"1.0 2.5 -3\"):");
@@ -78,6 +134,8 @@ namespace Vektormathematik_Abgabe
             Vector3 v2 = ReadVectorFromConsole();
             return (v1 , v2);
         }
+
+        
 
         /// <summary>
         /// Liest eine Zeile vom Nutzer ein, erwartet drei durch Leerzeichen getrennte Zahlen,
@@ -125,58 +183,10 @@ namespace Vektormathematik_Abgabe
             }
         }
 
-        /// <summary>
-        /// Auswahlmenü welche Berechnung man durchführen möchte.
-        /// </summary>
-        /// <returns></returns>
-        private static char OperationsPick()
-        {
-            string[] options = { "Addition", "Suptraktion", "Multiplikation", "Division", "Vektorlänge", "Distanzrechnung", "Quadratlänge", "Punktproduktrechnung" };  // Die Auswahlmöglichkeiten
-            int selectedIndex = 0;            // Startet bei Option 0 ("Addition")
-            ConsoleKeyInfo keyInfo;
+       
+        
 
-            do
-            {
-                Console.Clear();
-                Console.WriteLine("Dann wählen wir einmal aus, welche Berechnung wir durchführen möchten:\n");
 
-                // Ausgabe aller Optionen nebeneinander
-                for (int i = 0; i < options.Length; i++)
-                {
-                    // Markiere die aktuell ausgewählte Option mit eckigen Klammern
-                    if (i == selectedIndex)
-                        DrawCursor('[', options[i], ']');
-                    else
-                        DrawCursor(' ', options[i], ' ');
-
-                    // Füge einen Abstand zwischen den Optionen ein
-                    Console.Write("  ");
-                }
-                Console.WriteLine();
-
-                // Lese die Eingabe des Benutzers
-                Console.WriteLine("\nBestätige deine Eingabe mit 'Enter'.");
-
-                keyInfo = Console.ReadKey(true);
-
-                // Bei linker Pfeiltaste wird der Index um 1 verringert (wenn er > 0 ist)
-                if (keyInfo.Key == ConsoleKey.LeftArrow && selectedIndex > 0)
-                    selectedIndex--; // Auswahl zurücksetzen auf "O" (Option 0)
-
-                // Bei rechter Pfeiltaste wird der Index um 1 erhöht (wenn er < max index ist)
-                else if (keyInfo.Key == ConsoleKey.RightArrow && selectedIndex < options.Length - 1)
-                    selectedIndex++; // Auswahl auf "X" (Option 1) setzen
-
-            } while (keyInfo.Key != ConsoleKey.Enter); // Schleife bis Enter gedrückt wird
-
-            // Gibt die ausgewählte Option zurück
-            return options[selectedIndex][0];  // Rückgabe des ersten Zeichens der ausgewählten Option
-        }
-        private static void DrawCursor(char LeftChar, string Text, char Rightchar)
-        {
-            Console.Write(LeftChar);
-            Console.Write(Text);
-            Console.Write(Rightchar);
-        }
+        
     }
 }
