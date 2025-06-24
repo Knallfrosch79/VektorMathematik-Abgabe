@@ -1,192 +1,161 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vektormathematik_Abgabe
 {
+    internal enum OperationType
+    {
+        Add,       // A
+        Subtract,  // S
+        Multiply,  // M
+        Divide,    // D
+        Length,    // L
+        Square,    // Q
+        DotProduct,// P
+        Invalid
+    }
+
     internal class OperatorChoosing
     {
         public static void ChoosingOperation()
         {
-            // Deklaration der Variablen
-            Vector3 v3;
-            Vector3 v1 = new Vector3();
-            Vector3 v2 = new Vector3();
-            float num01 = 0f; // Initialisierung für den Fall, dass Multiplikation gewählt wird
-            float product;
-            
-            char operation = TextGoodies.OperationsPick();
-                //Console.WriteLine($"[DEBUG] ausgewähltes Zeichen: '{operation}'\n");
-                //Console.WriteLine("[DEBUG] Jetzt rufe ich VektorInput() auf …");
-            if (operation == 'M')
+            // Wähle und parse Operation
+            char opChar = TextGoodies.OperationsPick();
+            OperationType operation = ParseOperation(opChar);
+
+            // Hole benötigte Eingaben
+            Vector3 v1 = default, v2 = default;
+            float scalar = 0f;
+
+            switch (operation)
             {
-                (v1, num01) = VectorNumInput();
-            }
-            else if (operation == 'Q')
-            {
-                (v1) = VectorInput();
-            }
-            else
-            {
-                (v1, v2) = TwoVectorInput();
-                //Console.WriteLine("[DEBUG] VektorInput() wurde zurückgegeben.\n");
+                case OperationType.Multiply:
+                    (v1, scalar) = VectorNumInput();
+                    break;
+                case OperationType.Square:
+                case OperationType.Length:
+                    v1 = VectorInput();
+                    break;
+                case OperationType.Add:
+                case OperationType.Subtract:
+                case OperationType.DotProduct:
+                    (v1, v2) = TwoVectorInput();
+                    break;
+                case OperationType.Divide:
+                    // Für Division: Skalar wiederholt abfragen, bis ein gültiger (>0) eingegeben wird
+                    v1 = VectorInput();
+                    do
+                    {
+                        Console.Write("Bitte gib eine positive Zahl (>0) ein: ");
+                        scalar = TextGoodies.ReadInput();
+                        if (scalar <= 0f)
+                            Console.WriteLine("Ungültig. Der Skalar muss größer als 0 sein.");
+                    }
+                    while (scalar <= 0f);
+                    break;
+                default:
+                    Console.WriteLine("Ungültige Operation. Bitte A, S, M, D, L, Q oder P wählen.");
+                    return;
             }
 
-            if (operation == 'A')
+            // Führe Operation aus
+            switch (operation)
             {
-                v3 = V_Calculation.Addition(v1, v2);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Das Ergebnis der Addition ist: Vektor3 {v3}");
-                TextGoodies.WaitForEnter();
-                return;
+                case OperationType.Add:
+                    var addRes = v1.Add(v2);
+                    Console.WriteLine($"Das Ergebnis der Addition ist: {addRes}");
+                    break;
+                case OperationType.Subtract:
+                    var subRes = v1.Subtract(v2);
+                    Console.WriteLine($"Das Ergebnis der Subtraktion ist: {subRes}");
+                    break;
+                case OperationType.Multiply:
+                    var mulRes = v1.Multiply(scalar);
+                    Console.WriteLine($"Das Ergebnis der Multiplikation ist: {mulRes} (Vektor * {scalar})");
+                    break;
+                case OperationType.Divide:
+                    var divRes = v1.Divide(scalar);
+                    Console.WriteLine($"Das Ergebnis der Division ist: {divRes} (Vektor / {scalar})");
+                    break;
+                case OperationType.Length:
+                    float len = v1.Length();
+                    Console.WriteLine($"Die Länge des Vektors ist {len}.");
+                    break;
+                case OperationType.Square:
+                    float sq = v1.SquareLength();
+                    Console.WriteLine($"Die Quadratlänge des Vektors ist {sq}.");
+                    break;
+                case OperationType.DotProduct:
+                    float dot = v1.Dot(v2);
+                    Console.WriteLine($"Das Punktprodukt der beiden Vektoren ist {dot}.");
+                    break;
             }
-            else if (operation == 'S')
-            {
-                v3 = V_Calculation.Subtraktion(v1, v2);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Das Ergebnis der Subtraktion ist: Vektor3 {v3}");
-                TextGoodies.WaitForEnter();
-                return;
-            }
-            else if (operation == 'M')
-            {
-                v3 = V_Calculation.Multiplikation(v1, num01);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Das Ergebnis der Multiplikation ist: Vektor3 {v3} - (Vektor1 * {num01})");
-                TextGoodies.WaitForEnter();
-                return;
-            }
-            else if (operation == 'D')
-            {
-                v3 = V_Calculation.Division(v1, num01);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Das Ergebnis der Division ist: Vektor3 {v3} - (Vektor3 : {num01})");
-                TextGoodies.WaitForEnter();
-                return;
-            }
-            else if (operation == 'L')
-            {
-                float length1 = V_Calculation.Vektorlaenge(v1);
-                float length2 = V_Calculation.Vektorlaenge(v2);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Die Länge des ersten Vektors ist {length1} und die des zweiten {length2}.");
-                TextGoodies.WaitForEnter();
-                return;
-            }
-            else if (operation == 'Q')
-            {
-                product = V_Calculation.Quadratlaenge(v1);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Die Quadratlänge des Vektores ist {product}.");
-                TextGoodies.WaitForEnter();
-                return;
-            }
-            else if (operation == 'P')
-            {
-                product = V_Calculation.Punktprodukt(v1, v2);
-                TextGoodies.TextWait();
-                Console.WriteLine($"Das Punktprodukt der beiden Vektoren ist {product}.");
-                TextGoodies.WaitForEnter();
-                return;
-            }
+
+            TextGoodies.TextWait();
+            TextGoodies.WaitForEnter();
         }
 
-        /// <summary>
-        /// Liest einen Vektor vom Nutzer ein und gibt ihn zurück.
-        /// </summary>
-        /// <returns></returns>
+        private static OperationType ParseOperation(char c) => c switch
+        {
+            'A' => OperationType.Add,
+            'S' => OperationType.Subtract,
+            'M' => OperationType.Multiply,
+            'D' => OperationType.Divide,
+            'L' => OperationType.Length,
+            'Q' => OperationType.Square,
+            'P' => OperationType.DotProduct,
+            _ => OperationType.Invalid
+        };
+
         private static Vector3 VectorInput()
         {
-            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B.\"1.0 2.5 -3\"):");
-            Vector3 v1 = ReadVectorFromConsole();
-            return v1;
+            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B. \"1.0 2.5 -3\"): ");
+            return ReadVectorFromConsole();
         }
 
-        /// <summary>
-        /// Liest einen Vektor und eine Zahl vom Nutzer ein und gibt sie als Tupel zurück.
-        /// </summary>
-        /// <returns></returns>
-        private static (Vector3 v1, float num01) VectorNumInput()
+        private static (Vector3, float) VectorNumInput()
         {
-            Console.WriteLine("Gib jetzt bitte einmal den Vektor ein und danach die Zahl.");
-            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B.\"1.0 2.5 -3\"):");
-            Vector3 v1 = ReadVectorFromConsole();
-            Console.WriteLine("");
+            Console.WriteLine("Gib einen Vektor und danach eine Zahl ein.");
+            Console.Write("Bitte gib 3 Werte für den Vektor ein (z.B. \"1.0 2.5 -3\"): ");
+            Vector3 v = ReadVectorFromConsole();
             Console.Write("Bitte gib eine Zahl ein (z.B. \"2.5\"): ");
-            float num01 = TextGoodies.ReadInput(); // Liest eine Zahl vom Nutzer ein
-            return (v1, num01);
+            float scalar = TextGoodies.ReadInput();
+            return (v, scalar);
         }
 
-        /// <summary>
-        /// Liest zwei Vektoren vom Nutzer ein und gibt sie als Tupel zurück.
-        /// </summary>
-        /// <returns></returns>
-        private static (Vector3 , Vector3) TwoVectorInput()
+        private static (Vector3, Vector3) TwoVectorInput()
         {
-            Console.WriteLine("Jetzt brauchen wir noch die beiden Vektoren:");
-            Console.Write("Bitte gib 3 Werte für den ersten Vektor ein (z.B.\"1.0 2.5 -3\"):");
+            Console.WriteLine("Jetzt brauchen wir zwei Vektoren:");
+            Console.Write("Bitte gib 3 Werte für den ersten Vektor ein (z.B. \"1.0 2.5 -3\"): ");
             Vector3 v1 = ReadVectorFromConsole();
-            Console.WriteLine("");
-            Console.Write("Bitte gib 3 Werte für den zweiten Vektor ein (z.B.\"1.0 2.5 -3\"):");
+            Console.WriteLine();
+            Console.Write("Bitte gib 3 Werte für den zweiten Vektor ein (z.B. \"1.0 2.5 -3\"): ");
             Vector3 v2 = ReadVectorFromConsole();
-            return (v1 , v2);
+            return (v1, v2);
         }
 
-        
-
-        /// <summary>
-        /// Liest eine Zeile vom Nutzer ein, erwartet drei durch Leerzeichen getrennte Zahlen,
-        /// und wandelt diese in einen Vector3 um.
-        /// </summary>
-        static Vector3 ReadVectorFromConsole()
+        private static Vector3 ReadVectorFromConsole()
         {
             while (true)
             {
                 string input = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    Console.WriteLine("Leere Eingabe. Bitte drei Zahlen eingeben (z.B. \"1.0 2.5 -3\").");
+                    Console.WriteLine("Leere Eingabe. Bitte drei Zahlen eingeben (Format: x y z).");
                     continue;
                 }
 
-                // input.Trim(): Entfernt alle führenden und nachfolgenden Leer- oder Tabulator-Zeichen aus dem eingegebenen String.
-                // Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries):
-                //   • new[] { ' ', '\t' } gibt an, dass an jedem Leerzeichen (' ') oder Tabulator ('\t') getrennt werden soll.
-                //   • StringSplitOptions.RemoveEmptyEntries sorgt dafür, dass aus mehreren aufeinanderfolgenden Leerzeichen/Tabs
-                //     keine leeren Einträge im Ergebnis-Array entstehen.
-                // Zusammen bedeutet das: Zerlege den bereinigten Eingabe-String an Leerzeichen und Tabs und lösche leere Einträge.
                 string[] parts = input.Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (parts.Length != 3)
+                if (parts.Length != 3
+                    || !float.TryParse(parts[0], out float x)
+                    || !float.TryParse(parts[1], out float y)
+                    || !float.TryParse(parts[2], out float z))
                 {
-                    Console.WriteLine("Falsches Format. Bitte genau drei Werte eingeben (Format: x y z).");
+                    Console.WriteLine("Ungültige Eingabe. Bitte genau drei Werte eingeben (Format: x y z). Beispiel: 1.0 2.5 -3");
                     continue;
                 }
 
-                // Versuchen, die drei Teile in floats zu parsen
-                bool okX = float.TryParse(parts[0], out float x);
-                bool okY = float.TryParse(parts[1], out float y);
-                bool okZ = float.TryParse(parts[2], out float z);
-
-                if (!okX || !okY || !okZ)
-                {
-                    Console.WriteLine("Ungültige Zahleneingabe. Achte darauf, Punkte oder Komma als Dezimaltrennzeichen zu verwenden.");
-                    Console.WriteLine("Beispiel: 1.0 2.5 -3");
-                    continue;
-                }
-
-                // Alles erfolgreich geparst → neuen Vector3 zurückgeben
                 return new Vector3(x, y, z);
             }
         }
-
-       
-        
-
-
-        
     }
 }
