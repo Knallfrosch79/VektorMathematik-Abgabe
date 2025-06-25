@@ -8,7 +8,7 @@ namespace Vektormathematik_Abgabe
         Subtract,  // S
         Multiply,  // M
         Divide,    // D
-        Length,    // L
+        VectorLength,    // L
         Square,    // Q
         DotProduct,// P
         Invalid
@@ -32,7 +32,7 @@ namespace Vektormathematik_Abgabe
                     (v1, scalar) = VectorNumInput();
                     break;
                 case OperationType.Square:
-                case OperationType.Length:
+                case OperationType.VectorLength:
                     v1 = VectorInput();
                     break;
                 case OperationType.Add:
@@ -70,13 +70,13 @@ namespace Vektormathematik_Abgabe
                     break;
                 case OperationType.Multiply:
                     var mulRes = v1.Multiply(scalar);
-                    Console.WriteLine($"Das Ergebnis der Multiplikation ist: {mulRes} (Vektor * {scalar})");
+                    Console.WriteLine($"Das Ergebnis der Multiplikation ist: {mulRes} (Vektor: {v1} * {scalar})");
                     break;
                 case OperationType.Divide:
                     var divRes = v1.Divide(scalar);
-                    Console.WriteLine($"Das Ergebnis der Division ist: {divRes} (Vektor / {scalar})");
+                    Console.WriteLine($"Das Ergebnis der Division ist: {divRes} (Vektor: {v1} / {scalar})");
                     break;
-                case OperationType.Length:
+                case OperationType.VectorLength:
                     float len = v1.Length();
                     Console.WriteLine($"Die Länge des Vektors ist {len}.");
                     break;
@@ -100,7 +100,7 @@ namespace Vektormathematik_Abgabe
             'S' => OperationType.Subtract,
             'M' => OperationType.Multiply,
             'D' => OperationType.Divide,
-            'L' => OperationType.Length,
+            'V' => OperationType.VectorLength,
             'Q' => OperationType.Square,
             'P' => OperationType.DotProduct,
             _ => OperationType.Invalid

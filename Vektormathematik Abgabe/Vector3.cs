@@ -8,12 +8,10 @@ namespace Vektormathematik_Abgabe
 {
     internal struct Vector3
     {
-        // Felder der Klasse
         public float x;
         public float y;
         public float z;
 
-        // Default-Konstruktor (setzt alle Felder auf 0)
         public Vector3()
         {
             this.x = 0f;
@@ -21,7 +19,6 @@ namespace Vektormathematik_Abgabe
             this.z = 0f;
         }
 
-        // Konstruktor mit Parametern (initialisiert Felder mit übergebenen Werten)
         public Vector3(float x, float y, float z)
         {
             this.x = x;
@@ -29,7 +26,6 @@ namespace Vektormathematik_Abgabe
             this.z = z;
         }
 
-        // Beispiel: Überschreibe ToString(), damit man den Vektor leicht ausgeben kann
         public override string ToString()
         {
             return $"({x}, {y}, {z})";
